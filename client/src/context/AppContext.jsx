@@ -11,7 +11,7 @@ export const AppContextProvider = (props)=>{
 const currency = import.meta.env.VITE_CURRENCY
 const navigate = useNavigate()
 
-const { getToken } = useAuth(getToken)
+const { getToken } = useAuth()
 const { user } = useUser()
 
 const [allCourses, setAllCourses] = useState([])
