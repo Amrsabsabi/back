@@ -1,7 +1,8 @@
+import Stripe from "stripe"
+import Course from "../models/Course.js"
+import { Purchase } from "../models/Purchase.js"
 import User from "../models/User.js"
-import { Purchase } from "../models/Purchase.js";
-import Stripe from "stripe";
-import Course from "../models/Course.js";
+
 
 //get user data
 export const getUserData = async (req,res)=>{
@@ -30,31 +31,31 @@ export const userEnrolledCourses = async (req,res)=>{
 }
 
 //purchase Course
-export const purchaseCourse = async(req,res)=>{
+export const purchaseCourse= async(req,res)=>{
     try {
-        const { courseId } = req.body;
-        const { origin } = req.headers;
-        const userId = req.auth.userId;
-        const userData = await User.findById(userId);
-        const courseData = await Course.findById(courseId);
+        const { courseId } = req.body
+        const { origin } = req.headers
+        const userId = req.auth.userId
+        const userData = await User.findById(userId)
+        const courseData = await Course.findById(courseId)
 
         if(!userData || !courseData){
-            return res.json({success: false, message: 'Data Not Found'})
+            return res.json({ success : false, message: 'Data Not Found'})
         }
         const purchaseData = {
             courseId: courseData._id,
             userId,
-            amount: (courseData.coursePrice - courseData.discount
-                 * courseData.coursePrice / 100).toFixed(2),
+            amount: (courseData.coursePrice - courseData.discount * 
+                courseData.coursePrice/ 100).toFixed(2),
         }
         const newPurchase = await Purchase.create(purchaseData)
 
-        //Stripe gateway initialize
+        //Stripe Gateway initialize
         const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY)
         const currency = process.env.CURRENCY.toLowerCase()
-        
-        //creating line items for Stripe
-        const line_items = [{
+
+        //create line items for stripe
+        const line_items=[{
             price_data:{
                 currency,
                 product_data:{
@@ -75,7 +76,6 @@ export const purchaseCourse = async(req,res)=>{
         })
         res.json({success: true, session_url: session.url})
     } catch (error) {
-        res.json({success: false, message: error.message})
-
+        res.json({success: false, message: error.message});
     }
 }
