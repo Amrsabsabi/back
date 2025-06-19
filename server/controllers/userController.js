@@ -81,6 +81,7 @@ export const purchaseCourse= async(req,res)=>{
     }
 }
 
+
 //Update User Course progress
 export const updateUserCourseProgress = async (req, res)=>{
     try {
